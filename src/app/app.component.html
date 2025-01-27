@@ -1,18 +1,59 @@
-<div class="container-fluid">
-  <h1>Spotify Profile</h1>
-
-  <div class="mx-5">
-    <section id="profile">
-      <h2>Logged in as <span id="displayName"></span></h2>
-      <span id="avatar"></span>
-      <ul>
-        <li>User ID: <span id="id" class="text-danger"></span></li>
-        <li>Email: <span id="email"></span></li>
-        <li>Spotify URI: <a id="uri" href="#"></a></li>
-        <li>Link: <a id="url" href="#"></a></li>
-        <li>Profile Image: <span id="imgUrl"></span></li>
-      </ul>
-    </section>
+<div class="bg-dark vh-100">
+  <div class="header text-white p-3">
+    <h1>Spotify Profile</h1>
+  </div>
+  <div *ngIf="profile !== null" class="p-5">
+    <div class="row gx-3">
+      <div class="card col-7 p-3">
+        <section id="profile" class="row">
+          <h2>
+            Logged in as
+            <span id="displayName">{{ profile.display_name }}</span>
+          </h2>
+          <div class="col-4">
+            <span id="avatar" class="border border-secondary"
+              ><img
+                src="{{ profile.images[0].url }}"
+                width="profile.images[0].width"
+                height="profile.images[0].height"
+                class="rounded"
+                alt="No profile avatar"
+              />
+            </span>
+          </div>
+          <div class="col-auto d-flex flex-column">
+            <ul class="flex-grow-1 d-flex flex-column justify-content-between">
+              <li>
+                User ID:
+                <span id="id" class="text-danger">{{ profile.id }}</span>
+              </li>
+              <li>
+                Country: <span id="country">{{ profile.country }}</span>
+              </li>
+              <li>
+                Email: <span id="email">{{ profile.email }}</span>
+              </li>
+              <li>
+                Spotify URI: <a id="uri" href="#">{{ profile.uri }}</a>
+              </li>
+              <li>
+                Link:
+                <a id="url" href="#">{{ profile.external_urls.spotify }}</a>
+              </li>
+              <li>
+                Profile Image:
+                <span id="imgUrl">{{ profile.images[0].url }}</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+      <div class="card col-auto mx-5 p-3">
+        <ul>
+          <li>Somethign</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 <router-outlet />

@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { SpotifyAuthService } from './services/spotify-auth.service';
 import { RouterOutlet } from '@angular/router';
+import { Profile } from './interfaces/profile';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NgIf],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 
 export class AppComponent implements OnInit{
-  clientId: string = ''; // Add your client ID
+  clientId: string = '8c075a7f139146519b4e9fac7ce3439d'; // Add your client ID
   accessToken: string | null = null;
+  profile: Profile | null = null;
 
   constructor(private spotifyAuth: SpotifyAuthService) {}
 
@@ -23,18 +26,25 @@ export class AppComponent implements OnInit{
         this.spotifyAuth.redirectToAuthCodeFlow(this.clientId);
     } else {
         const accessToken = await this.spotifyAuth.getAccessToken(this.clientId, code);
-        const profile = await this.fetchProfile(accessToken);
-        this.populateUI(profile);
+        this.profile = await this.fetchProfile(accessToken);
     }
   }
 
-  async fetchProfile(token: string): Promise<any> {
+  async fetchProfile(token: string): Promise<Profile> {
     const result = await fetch("https://api.spotify.com/v1/me", {
-        method: "GET", headers: { Authorization: `Bearer ${token}` }
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
     });
-
-    return await result.json();
+  
+    if (!result.ok) {
+      throw new Error(`Failed to fetch profile: ${result.statusText}`);
+    }
+  
+    // Assert the type of the JSON response
+    const profile: Profile = await result.json();
+    return profile;
   }
+  
 
   populateUI(profile: any) {
     document.getElementById("displayName")!.innerText = profile.display_name;

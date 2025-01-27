@@ -1,0 +1,7 @@
+.header {
+    background-color: var(--bs-green) !important;
+}
+
+.card {
+    background-color: var(--bs-teal) !important;
+}
