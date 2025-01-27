@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Artist } from './interfaces/artist';
-import { NgIf } from '@angular/common';
 import { SpotifyService } from './services/spotify/spotify.service';
 import { Profile } from './interfaces/profile';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,7 @@ import { Profile } from './interfaces/profile';
 })
 
 export class AppComponent implements OnInit{
-  profile: Profile = <Profile>{};
+  profile: Profile | null = null;
   topArtists: Artist[] | null = null;
 
   constructor(private spotifyService: SpotifyService) {}
@@ -24,18 +24,26 @@ export class AppComponent implements OnInit{
     const code = params.get('code');
 
     if (code) {
-      this.spotifyService.getAuthData(this.spotifyService.clientId, code).subscribe({
-        next: () => {
-          this.spotifyService.getUserProfile().subscribe({
+      this.spotifyService.getAuthData(code).subscribe({
+        next: (authResponse) => {
+          this.seeValues(authResponse);
+          this.spotifyService.getUserProfile(authResponse.access_token).subscribe({
             next: (profile) => {
               console.log('User Profile:', profile);
+              this.seeValues(profile);
             },
             error: (err) => console.error('Error fetching user profile:', err),
           });
         },
         error: (err) => console.error('Error during authentication:', err),
       });
+    } else {
+      this.spotifyService.redirectToAuthCodeFlow();
     }
+  }
+
+  seeValues(something: any) {
+    console.log('Pause.');
   }
 
   async fetchTopArtists(token: string): Promise<void> {

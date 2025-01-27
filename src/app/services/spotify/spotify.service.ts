@@ -5,7 +5,6 @@ import { from } from 'rxjs/internal/observable/from';
 import { map } from 'rxjs/internal/operators/map';
 import { AuthResponse } from '../../interfaces/auth-response';
 import { Profile } from '../../interfaces/profile';
-import { of } from 'rxjs/internal/observable/of';
 
 @Injectable({
   providedIn: 'root'
@@ -14,25 +13,15 @@ export class SpotifyService {
   redirectUri: string = 'http://localhost:4200/callback';
   clientId: string = '8c075a7f139146519b4e9fac7ce3439d'; // Add your client ID
   profile: Profile | null = null;
+  authResponse: AuthResponse | null = null;
 
-  private authResponse: AuthResponse | null = null;
-
-  constructor(private http: HttpClient) {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    
-    if (!code) {
-      this.redirectToAuthCodeFlow(this.clientId);
-    } else {
-      this.getAuthData(this.clientId, code);
-    }
-  }
+  constructor(private http: HttpClient) {}
 
   /**
    * Creates encrption key pair and redirects user to Spotify authetication.
    * @param clientId The ID of the users Spotify developer account.
    */
-  redirectToAuthCodeFlow(clientId: string): void {
+  redirectToAuthCodeFlow(): void {
     const verifier = this.generateCodeVerifier(128);
 
     // Create a key/value for the code verifier and store in browser storage
@@ -41,7 +30,7 @@ export class SpotifyService {
     this.generateCodeChallenge(verifier).subscribe({
       next: challenge => {
         const params = new HttpParams()
-        .set('client_id', clientId)
+        .set('client_id', this.clientId)
         .set('response_type', 'code')
         .set('redirect_uri', this.redirectUri)
         .set('scope', 'user-read-private user-read-email')
@@ -59,12 +48,7 @@ export class SpotifyService {
    * @param code The challenge code to verify user.
    * @returns An observer of the access token string.
    */
-  getAuthData(clientId: string, code: string): Observable<AuthResponse> {
-    // Check to see if we already have access token
-    // if (this.authResponse !== null) {
-    //   return of(this.authResponse);
-    // }
-
+  getAuthData(code: string): Observable<AuthResponse> {
     const verifier = localStorage.getItem('verifier');
 
     if (!verifier) {
@@ -72,35 +56,29 @@ export class SpotifyService {
     }
 
     const body = new HttpParams()
-      .set('client_id', clientId)
+      .set('client_id', this.clientId)
       .set('grant_type', 'authorization_code')
       .set('code', code)
       .set('redirect_uri', this.redirectUri)
       .set('code_verifier', verifier);
 
     const headers = new HttpHeaders({
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    const response = this.http.post<AuthResponse>('https://accounts.spotify.com/api/token', body, { headers });
-
-    // Assign access token so we don't have to make another http request
-    response.subscribe({
-      next: authResponse => {
-        this.authResponse = authResponse;
-      }
-    });
-    
-    return response;
+    return this.http
+    .post<AuthResponse>('https://accounts.spotify.com/api/token', body, { headers })
+    .pipe(
+      map((authResponse) => {
+        this.authResponse = authResponse; // Cache the authResponse
+        return authResponse;
+      })
+    );
   }
 
-  getUserProfile(): Observable<Profile> {
-    if (this.authResponse === null) {
-      throw new Error('Access token missing.');
-    }
-
+  getUserProfile(accesToken: string): Observable<Profile> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authResponse.access_token}`
+      Authorization: `Bearer ${accesToken}`
     });
     return this.http.get<Profile>('https://api.spotify.com/v1/me', { headers });
   }
