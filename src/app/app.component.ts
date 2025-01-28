@@ -1,38 +1,48 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, createPlatform, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Artist } from './interfaces/artist';
+import { Artist, TopArtistsResponse } from './interfaces/artist';
 import { SpotifyService } from './services/spotify/spotify.service';
 import { Profile } from './interfaces/profile';
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
+import { AuthResponse } from './interfaces/auth-response';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgIf],
+  imports: [RouterOutlet, NgIf, NgFor],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 
 export class AppComponent implements OnInit{
   profile: Profile | null = null;
-  topArtists: Artist[] | null = null;
+  topArtists: Artist[] = [];
 
-  constructor(private spotifyService: SpotifyService) {}
+  constructor(private spotifyService: SpotifyService, private cdr: ChangeDetectorRef) {}
 
   /** @inheritdoc */
   ngOnInit() {
+    console.log('app.component initialized')
+
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
 
+    // Check if user has already authenticated and redirect them if not
     if (code) {
       this.spotifyService.getAuthData(code).subscribe({
-        next: (authResponse) => {
-          this.seeValues(authResponse);
+        next: (authResponse: AuthResponse) => {
+          // Get user profile
           this.spotifyService.getUserProfile(authResponse.access_token).subscribe({
-            next: (profile) => {
-              console.log('User Profile:', profile);
-              this.seeValues(profile);
+            next: (profile: Profile) => {
+              this.profile = profile;
             },
             error: (err) => console.error('Error fetching user profile:', err),
+          });
+          // Get user top artists
+          this.spotifyService.getTop5Artists(authResponse.access_token).subscribe({
+            next: (artistsResponse: TopArtistsResponse) => {
+              this.topArtists = artistsResponse.items;
+            },
+            error: (err) => console.error('Error fetching top artists:', err),
           });
         },
         error: (err) => console.error('Error during authentication:', err),
@@ -40,17 +50,5 @@ export class AppComponent implements OnInit{
     } else {
       this.spotifyService.redirectToAuthCodeFlow();
     }
-  }
-
-  seeValues(something: any) {
-    console.log('Pause.');
-  }
-
-  async fetchTopArtists(token: string): Promise<void> {
-    const result = await fetch('https://api.spotify.com/v1/me/top/artists?time_range=long_term&offset=0', {
-      method: 'GET', headers: { Authorization: `Bearer ${token}` }
-    });
-
-    this.topArtists = await result.json();
   }
 }

@@ -5,6 +5,7 @@ import { from } from 'rxjs/internal/observable/from';
 import { map } from 'rxjs/internal/operators/map';
 import { AuthResponse } from '../../interfaces/auth-response';
 import { Profile } from '../../interfaces/profile';
+import { Artist, TopArtistsResponse } from '../../interfaces/artist';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,8 @@ export class SpotifyService {
 
   constructor(private http: HttpClient) {}
 
+  // #region Authentication functions
+  
   /**
    * Creates encrption key pair and redirects user to Spotify authetication.
    * @param clientId The ID of the users Spotify developer account.
@@ -33,7 +36,7 @@ export class SpotifyService {
         .set('client_id', this.clientId)
         .set('response_type', 'code')
         .set('redirect_uri', this.redirectUri)
-        .set('scope', 'user-read-private user-read-email')
+        .set('scope', 'user-read-private user-read-email user-top-read') //Add scopes if 403 error occurs
         .set('code_challenge_method', 'S256')
         .set('code_challenge', challenge);
   
@@ -76,13 +79,6 @@ export class SpotifyService {
     );
   }
 
-  getUserProfile(accesToken: string): Observable<Profile> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${accesToken}`
-    });
-    return this.http.get<Profile>('https://api.spotify.com/v1/me', { headers });
-  }
-
   /**
    * Helper to generate code verifier (the longer, the better).
    * @param length The Length of code (max 128).
@@ -123,5 +119,30 @@ export class SpotifyService {
           .replace(/=+$/, '');
       })
     );
+  }
+  // #endregion
+
+  /**
+   * Retrives a users profile from Spotify.
+   * @param accessToken The token require for API call.
+   * @returns An observer of the Profile.
+   */
+  getUserProfile(accessToken: string): Observable<Profile> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+    return this.http.get<Profile>('https://api.spotify.com/v1/me', { headers });
+  }
+
+  /**
+   * Get the current top 5 artist from the past 4 weeks.
+   * @param accessToken The token require for API call.
+   * @returns An observer of a list of artists.
+   */
+  getTop5Artists(accessToken: string): Observable<TopArtistsResponse> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+    return this.http.get<TopArtistsResponse>('https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=5&offset=0', { headers });
   }
 }
