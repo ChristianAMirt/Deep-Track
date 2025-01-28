@@ -1,64 +1,54 @@
-import { Component, OnInit } from '@angular/core';
-import { SpotifyAuthService } from './services/spotify-auth.service';
+import { ChangeDetectorRef, Component, createPlatform, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Artist, TopArtistsResponse } from './interfaces/artist';
+import { SpotifyService } from './services/spotify/spotify.service';
 import { Profile } from './interfaces/profile';
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
+import { AuthResponse } from './interfaces/auth-response';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgIf],
+  imports: [RouterOutlet, NgIf, NgFor],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 
 export class AppComponent implements OnInit{
-  clientId: string = '8c075a7f139146519b4e9fac7ce3439d'; // Add your client ID
-  accessToken: string | null = null;
   profile: Profile | null = null;
+  topArtists: Artist[] = [];
 
-  constructor(private spotifyAuth: SpotifyAuthService) {}
+  constructor(private spotifyService: SpotifyService, private cdr: ChangeDetectorRef) {}
 
-  async ngOnInit(): Promise<void> {
+  /** @inheritdoc */
+  ngOnInit() {
+    console.log('app.component initialized')
+
     const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    
-    if (!code) {
-        this.spotifyAuth.redirectToAuthCodeFlow(this.clientId);
+    const code = params.get('code');
+
+    // Check if user has already authenticated and redirect them if not
+    if (code) {
+      this.spotifyService.getAuthData(code).subscribe({
+        next: (authResponse: AuthResponse) => {
+          // Get user profile
+          this.spotifyService.getUserProfile(authResponse.access_token).subscribe({
+            next: (profile: Profile) => {
+              this.profile = profile;
+            },
+            error: (err) => console.error('Error fetching user profile:', err),
+          });
+          // Get user top artists
+          this.spotifyService.getTop5Artists(authResponse.access_token).subscribe({
+            next: (artistsResponse: TopArtistsResponse) => {
+              this.topArtists = artistsResponse.items;
+            },
+            error: (err) => console.error('Error fetching top artists:', err),
+          });
+        },
+        error: (err) => console.error('Error during authentication:', err),
+      });
     } else {
-        const accessToken = await this.spotifyAuth.getAccessToken(this.clientId, code);
-        this.profile = await this.fetchProfile(accessToken);
+      this.spotifyService.redirectToAuthCodeFlow();
     }
   }
-
-  async fetchProfile(token: string): Promise<Profile> {
-    const result = await fetch("https://api.spotify.com/v1/me", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  
-    if (!result.ok) {
-      throw new Error(`Failed to fetch profile: ${result.statusText}`);
-    }
-  
-    // Assert the type of the JSON response
-    const profile: Profile = await result.json();
-    return profile;
-  }
-  
-
-  populateUI(profile: any) {
-    document.getElementById("displayName")!.innerText = profile.display_name;
-    if (profile.images[0]) {
-        const profileImage = new Image(200, 200);
-        profileImage.src = profile.images[0].url;
-        document.getElementById("avatar")!.appendChild(profileImage);
-    }
-    document.getElementById("id")!.innerText = profile.id;
-    document.getElementById("email")!.innerText = profile.email;
-    document.getElementById("uri")!.innerText = profile.uri;
-    document.getElementById("uri")!.setAttribute("href", profile.external_urls.spotify);
-    document.getElementById("url")!.innerText = profile.href;
-    document.getElementById("url")!.setAttribute("href", profile.href);
-    document.getElementById("imgUrl")!.innerText = profile.images[0]?.url ?? '(no profile image)';
-}
 }

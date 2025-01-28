@@ -2,21 +2,23 @@
   <div class="header text-white p-3">
     <h1>Spotify Profile</h1>
   </div>
-  <div *ngIf="profile !== null" class="p-5">
-    <div class="row gx-3">
-      <div class="card col-7 p-3">
+  <div class="p-5">
+    <div *ngIf="profile" class="row gx-0">
+      <div class="card col-6 p-3">
         <section id="profile" class="row">
           <h2>
-            Logged in as
-            <span id="displayName">{{ profile.display_name }}</span>
+            <u
+              >Logged in as
+              <span id="displayName">{{ profile.display_name }}</span>
+            </u>
           </h2>
-          <div class="col-4">
+          <div class="col-3">
             <span id="avatar" class="border border-secondary"
               ><img
-                src="{{ profile.images[0].url }}"
-                width="profile.images[0].width"
-                height="profile.images[0].height"
                 class="rounded"
+                src="{{ profile.images[0].url }}"
+                width="{{ profile.images[0].width - 100 }}"
+                height="{{ profile.images[0].height - 100 }}"
                 alt="No profile avatar"
               />
             </span>
@@ -48,12 +50,19 @@
           </div>
         </section>
       </div>
-      <div class="card col-auto mx-5 p-3">
-        <ul>
-          <li>Somethign</li>
-        </ul>
+      <div class="col-1"></div>
+      <div *ngIf="topArtists.length > 0" class="card col-5 p-3">
+        <h4><u>Top Artists This Month:</u></h4>
+        <div *ngFor="let artist of topArtists">
+          <img
+            src="{{ artist.images[2].url }}"
+            width="{{ artist.images[2].width - 100 }}"
+            height="{{ artist.images[2].height - 100 }}"
+            alt="No artist image"
+          />
+          <span class="mx-3">{{ artist.name }}</span>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<router-outlet />
