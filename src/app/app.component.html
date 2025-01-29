@@ -1,67 +1,81 @@
-<div class="bg-dark vh-100">
-  <div class="header text-white p-3">
-    <h1>Spotify Profile</h1>
-  </div>
-  <div class="p-5">
-    <div *ngIf="profile" class="row gx-0">
-      <div class="card col-6 p-3">
-        <section id="profile" class="row">
-          <h2>
-            <u
-              >Logged in as
-              <span id="displayName">{{ profile.display_name }}</span>
-            </u>
-          </h2>
-          <div class="col-3">
-            <span id="avatar" class="border border-secondary"
-              ><img
-                class="rounded"
-                src="{{ profile.images[0].url }}"
-                width="{{ profile.images[0].width - 100 }}"
-                height="{{ profile.images[0].height - 100 }}"
-                alt="No profile avatar"
-              />
-            </span>
-          </div>
-          <div class="col-auto d-flex flex-column">
-            <ul class="flex-grow-1 d-flex flex-column justify-content-between">
-              <li>
-                User ID:
-                <span id="id" class="text-danger">{{ profile.id }}</span>
-              </li>
-              <li>
-                Country: <span id="country">{{ profile.country }}</span>
-              </li>
-              <li>
-                Email: <span id="email">{{ profile.email }}</span>
-              </li>
-              <li>
-                Spotify URI: <a id="uri" href="#">{{ profile.uri }}</a>
-              </li>
-              <li>
-                Link:
-                <a id="url" href="#">{{ profile.external_urls.spotify }}</a>
-              </li>
-              <li>
-                Profile Image:
-                <span id="imgUrl">{{ profile.images[0].url }}</span>
-              </li>
-            </ul>
-          </div>
-        </section>
+<div class="header text-white p-3">
+  <h1>Spotify Profile</h1>
+</div>
+<div class="p-5">
+  <div *ngIf="playerState" class="card p-3 mb-5">
+    <h2><u>Currently Playing:</u></h2>
+    <div class="d-flex align-items-center">
+      <img
+        src="{{ playerState.item.album.images[1].url }}"
+        width="{{ playerState.item.album.images[1].width }}"
+        height="{{ playerState.item.album.images[1].height }}"
+        alt="No album art found"
+      />
+      <div class="flex-grow-1 d-flex flex-column justify-content-between mx-3">
+        <h3>{{ playerState.item.name }}</h3>
+        <h5>{{ playerState.item.album.name }}</h5>
+        <p>{{ getArtistNames() }}</p>
       </div>
-      <div class="col-1"></div>
-      <div *ngIf="topArtists.length > 0" class="card col-5 p-3">
-        <h4><u>Top Artists This Month:</u></h4>
-        <div *ngFor="let artist of topArtists">
-          <img
-            src="{{ artist.images[2].url }}"
-            width="{{ artist.images[2].width - 100 }}"
-            height="{{ artist.images[2].height - 100 }}"
-            alt="No artist image"
-          />
-          <span class="mx-3">{{ artist.name }}</span>
+    </div>
+  </div>
+  <div *ngIf="profile" class="row gx-0">
+    <div class="card col-6 p-3">
+      <section id="profile" class="row">
+        <h2>
+          <u
+            >Logged in as
+            <span id="displayName">{{ profile.display_name }}</span>
+          </u>
+        </h2>
+        <div class="col-3">
+          <span id="avatar" class="border border-secondary"
+            ><img
+              class="rounded"
+              src="{{ profile.images[0].url }}"
+              width="{{ profile.images[0].width - 100 }}"
+              height="{{ profile.images[0].height - 100 }}"
+              alt="No profile avatar"
+            />
+          </span>
         </div>
+        <div class="col-auto d-flex flex-column">
+          <ul class="flex-grow-1 d-flex flex-column justify-content-between">
+            <li>
+              User ID:
+              <span id="id">{{ profile.id }}</span>
+            </li>
+            <li>
+              Country: <span id="country">{{ profile.country }}</span>
+            </li>
+            <li>
+              Email: <span id="email">{{ profile.email }}</span>
+            </li>
+            <li>
+              Spotify URI: <a id="uri" href="#">{{ profile.uri }}</a>
+            </li>
+            <li>
+              Link:
+              <a id="url" href="#">{{ profile.external_urls.spotify }}</a>
+            </li>
+            <li>
+              Profile Image:
+              <span id="imgUrl">{{ profile.images[0].url }}</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <div class="col-1"></div>
+    <div *ngIf="topArtists" class="card col-5 p-3">
+      <h4><u>Top Artists This Month:</u></h4>
+      <div *ngFor="let artist of topArtists">
+        <img
+          src="{{ artist.images[2].url }}"
+          width="{{ artist.images[2].width - 100 }}"
+          height="{{ artist.images[2].height - 100 }}"
+          alt="No artist image"
+        />
+        <span class="mx-3">{{ artist.name }}</span>
       </div>
     </div>
   </div>

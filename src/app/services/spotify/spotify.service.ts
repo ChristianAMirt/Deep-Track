@@ -6,6 +6,7 @@ import { map } from 'rxjs/internal/operators/map';
 import { AuthResponse } from '../../interfaces/auth-response';
 import { Profile } from '../../interfaces/profile';
 import { Artist, TopArtistsResponse } from '../../interfaces/artist';
+import { PlayerState } from '../../interfaces/player-state';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,6 @@ export class SpotifyService {
   constructor(private http: HttpClient) {}
 
   // #region Authentication functions
-  
   /**
    * Creates encrption key pair and redirects user to Spotify authetication.
    * @param clientId The ID of the users Spotify developer account.
@@ -36,7 +36,7 @@ export class SpotifyService {
         .set('client_id', this.clientId)
         .set('response_type', 'code')
         .set('redirect_uri', this.redirectUri)
-        .set('scope', 'user-read-private user-read-email user-top-read') //Add scopes if 403 error occurs
+        .set('scope', 'user-read-private user-read-email user-top-read user-read-playback-state') //Add scopes if 403 error occurs
         .set('code_challenge_method', 'S256')
         .set('code_challenge', challenge);
   
@@ -144,5 +144,12 @@ export class SpotifyService {
       Authorization: `Bearer ${accessToken}`
     });
     return this.http.get<TopArtistsResponse>('https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=5&offset=0', { headers });
+  }
+
+  getPlayerState(accessToken: string): Observable<PlayerState> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+    return this.http.get<PlayerState>('https://api.spotify.com/v1/me/player', { headers });
   }
 }
