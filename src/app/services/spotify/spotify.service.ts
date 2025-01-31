@@ -12,7 +12,9 @@ import { PlayerState } from '../../interfaces/player-state';
   providedIn: 'root'
 })
 export class SpotifyService {
-  redirectUri: string = 'http://localhost:4200/callback';
+  // redirectUri: string = 'http://localhost:4200/callback'; // Development
+  redirectUri: string = 'https://christianamirt.github.io/Deep-Track/callback'; // Production
+
   clientId: string = '8c075a7f139146519b4e9fac7ce3439d'; // Add your client ID
   profile: Profile | null = null;
   authResponse: AuthResponse | null = null;
