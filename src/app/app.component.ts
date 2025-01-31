@@ -28,9 +28,19 @@ export class AppComponent implements OnInit, OnDestroy {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
 
+    const currentUrl = window.location.href;
+    var redirectUri = '';
+    if (currentUrl.includes('localhost')) {
+      redirectUri = 'http://localhost:4200/callback';
+    } else if (currentUrl.includes('github.io')) {
+      redirectUri = 'https://christianamirt.github.io/Deep-Track/callback';
+    } else {
+      console.log('Running on another environment');
+    }
+
     // Check if user has already authenticated and redirect them if not
     if (code) {
-      this.spotifyService.getAuthData(code).subscribe({
+      this.spotifyService.getAuthData(redirectUri, code).subscribe({
         next: (authResponse: AuthResponse) => {
           // Get user profile
           this.spotifyService.getUserProfile(authResponse.access_token).subscribe({
@@ -64,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
         error: (err) => console.error('Error during authentication:', err),
       });
     } else {
-      this.spotifyService.redirectToAuthCodeFlow();
+      this.spotifyService.redirectToAuthCodeFlow(redirectUri);
     }
   }
 

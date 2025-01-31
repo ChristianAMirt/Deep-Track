@@ -12,9 +12,6 @@ import { PlayerState } from '../../interfaces/player-state';
   providedIn: 'root'
 })
 export class SpotifyService {
-  // redirectUri: string = 'http://localhost:4200/callback'; // Development
-  redirectUri: string = 'https://christianamirt.github.io/Deep-Track/callback'; // Production
-
   clientId: string = '8c075a7f139146519b4e9fac7ce3439d'; // Add your client ID
   profile: Profile | null = null;
   authResponse: AuthResponse | null = null;
@@ -26,7 +23,7 @@ export class SpotifyService {
    * Creates encrption key pair and redirects user to Spotify authetication.
    * @param clientId The ID of the users Spotify developer account.
    */
-  redirectToAuthCodeFlow(): void {
+  redirectToAuthCodeFlow(redirectUri: string): void {
     const verifier = this.generateCodeVerifier(128);
 
     // Create a key/value for the code verifier and store in browser storage
@@ -37,7 +34,7 @@ export class SpotifyService {
         const params = new HttpParams()
         .set('client_id', this.clientId)
         .set('response_type', 'code')
-        .set('redirect_uri', this.redirectUri)
+        .set('redirect_uri', redirectUri)
         .set('scope', 'user-read-private user-read-email user-top-read user-read-playback-state') //Add scopes if 403 error occurs
         .set('code_challenge_method', 'S256')
         .set('code_challenge', challenge);
@@ -53,7 +50,7 @@ export class SpotifyService {
    * @param code The challenge code to verify user.
    * @returns An observer of the access token string.
    */
-  getAuthData(code: string): Observable<AuthResponse> {
+  getAuthData(redirectUri: string, code: string): Observable<AuthResponse> {
     const verifier = localStorage.getItem('verifier');
 
     if (!verifier) {
@@ -64,7 +61,7 @@ export class SpotifyService {
       .set('client_id', this.clientId)
       .set('grant_type', 'authorization_code')
       .set('code', code)
-      .set('redirect_uri', this.redirectUri)
+      .set('redirect_uri', redirectUri)
       .set('code_verifier', verifier);
 
     const headers = new HttpHeaders({
