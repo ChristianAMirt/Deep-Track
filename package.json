@@ -1,5 +1,5 @@
 {
-  "name": "spotify-helper",
+  "name": "deep-track",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -18,8 +18,11 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
+    "autoprefixer": "^10.4.20",
     "bootstrap": "^5.3.3",
+    "postcss-cli": "^11.0.0",
     "rxjs": "~7.8.0",
+    "sass": "^1.83.4",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
@@ -28,6 +31,7 @@
     "@angular/cli": "^19.1.4",
     "@angular/compiler-cli": "^19.1.0",
     "@types/jasmine": "~5.1.0",
+    "angular-cli-ghpages": "^2.0.3",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

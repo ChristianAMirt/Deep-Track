@@ -8,7 +8,7 @@
     }
   },
   "projects": {
-    "Spotify-Helper": {
+    "Deep-Track": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -18,7 +18,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/spotify-helper",
+            "outputPath": "dist/deep-track",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -67,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Spotify-Helper:build:production"
+              "buildTarget": "Deep-Track:build:production"
             },
             "development": {
-              "buildTarget": "Spotify-Helper:build:development"
+              "buildTarget": "Deep-Track:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -97,6 +97,9 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
