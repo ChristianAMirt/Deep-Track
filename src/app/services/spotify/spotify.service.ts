@@ -2,16 +2,22 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, map, Observable, of, switchMap } from 'rxjs';
 import { AuthResponse } from '../../interfaces/auth-response';
-import { Profile } from '../../interfaces/profile';
-import { TopArtistsResponse } from '../../interfaces/artist';
-import { PlayerState } from '../../interfaces/player-state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpotifyService {
-  clientId: string = '8c075a7f139146519b4e9fac7ce3439d'; // Add your client ID
+  /** Authentication data. */
   private authResponse$: BehaviorSubject<AuthResponse | null> = new BehaviorSubject<AuthResponse | null>(null);
+  /** ID given to this application that Spotify uses to track API calls. */
+  readonly clientId: string = '8c075a7f139146519b4e9fac7ce3439d';
+  /** Authorizations required for certian API calls that user has to allow during authentication. */
+  readonly authorizationScopes = `
+  user-read-private 
+  user-read-email 
+  user-top-read 
+  user-read-playback-state 
+  user-read-currently-playing`;
 
   constructor(private http: HttpClient) {}
 
@@ -38,7 +44,7 @@ export class SpotifyService {
         .set('client_id', this.clientId)
         .set('response_type', 'code')
         .set('redirect_uri', redirectUri)
-        .set('scope', 'user-read-private user-read-email user-top-read user-read-playback-state') //Add scopes if 403 error occurs
+        .set('scope', this.authorizationScopes)
         .set('code_challenge_method', 'S256')
         .set('code_challenge', challenge);
   
@@ -141,22 +147,7 @@ export class SpotifyService {
    * @returns An observable of the access token.
    */
   private getAccessToken(): Observable<string> {
-    // First check service property for value
-    const cachedAuth = this.authResponse$.getValue();
-
-    if (cachedAuth && cachedAuth.access_token) {
-      return of(cachedAuth.access_token);
-    }
-
-    // If no cached token, attempt to retrieve from localStorage
-    const storedAuth = localStorage.getItem('authResponse');
-    if (storedAuth) {
-      const parsedAuth = JSON.parse(storedAuth) as AuthResponse;
-      this.authResponse$.next(parsedAuth);
-      return of(parsedAuth.access_token);
-    }
-
-    // If token not stored, check URL for code, and try to make a request for access token (case where user was redirected)
+    // Check URL for code, and try to make a request for access token (case where user was redirected)
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     if (code) {
@@ -177,6 +168,21 @@ export class SpotifyService {
           return authResponse.access_token;
         })
       );
+    }
+
+    // If there's no code, check service property for value
+    const cachedAuth = this.authResponse$.getValue();
+
+    if (cachedAuth && cachedAuth.access_token) {
+      return of(cachedAuth.access_token);
+    }
+
+    // If no cached token, attempt to retrieve from localStorage
+    const storedAuth = localStorage.getItem('authResponse');
+    if (storedAuth) {
+      const parsedAuth = JSON.parse(storedAuth) as AuthResponse;
+      this.authResponse$.next(parsedAuth);
+      return of(parsedAuth.access_token);
     }
 
     // If no stored token, return an error
@@ -205,63 +211,6 @@ export class SpotifyService {
         });
 
         return this.http.get<T>(url, { headers });
-      })
-    );
-  }
-
-  /**
-   * Retrives a users profile from Spotify.
-   * @returns An observer of the Profile.
-   */
-  getUserProfile(): Observable<Profile> {
-    return this.getAccessToken().pipe(
-      switchMap(token => {
-        if (!token) {
-          throw new Error('No access token available.');
-        }
-
-        const headers = new HttpHeaders({
-          Authorization: `Bearer ${token}`
-        });
-
-        return this.http.get<Profile>('https://api.spotify.com/v1/me', { headers });
-      })
-    );
-  }
-
-  /**
-   * Get the current top 5 artist from the past 4 weeks.
-   * @param accessToken The token require for API call.
-   * @returns An observer of a list of artists.
-   */
-  getTop5Artists(): Observable<TopArtistsResponse> {
-    return this.getAccessToken().pipe(
-      switchMap(token => {
-        if (!token) {
-          throw new Error('No access token available.');
-        }
-
-        const headers = new HttpHeaders({
-          Authorization: `Bearer ${token}`
-        });
-
-        return this.http.get<TopArtistsResponse>('https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=5&offset=0', { headers });
-      })
-    );
-  }
-
-  getPlayerState(): Observable<PlayerState> {
-    return this.getAccessToken().pipe(
-      switchMap(token => {
-        if (!token) {
-          throw new Error('No access token available.');
-        }
-
-        const headers = new HttpHeaders({
-          Authorization: `Bearer ${token}`
-        });
-
-        return this.http.get<PlayerState>('https://api.spotify.com/v1/me/player', { headers });
       })
     );
   }

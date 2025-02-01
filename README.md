@@ -17,7 +17,7 @@ Once the server is running, open your browser and navigate to `http://localhost:
 To deploy project to Github pages automatically, run:
 
 ```bash
-ng deploy --base-href=/deep-track/
+ng deploy --base-href=/Deep-Track/
 ```
 
 This will automatically build and push to the gh-pages branch.

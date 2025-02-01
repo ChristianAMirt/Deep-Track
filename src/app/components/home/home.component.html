@@ -1,1 +1,36 @@
-<p>home works!</p>
+<div class="container-fluid">
+  <div class="p-5">
+    <div *ngIf="playerState" class="card bg-teal p-3 mb-5">
+      <h2><u>Currently Playing:</u></h2>
+      <div class="d-flex align-items-center">
+        <img
+          src="{{ playerState.item.album.images[1].url }}"
+          width="{{ playerState.item.album.images[1].width }}"
+          height="{{ playerState.item.album.images[1].height }}"
+          alt="No album art found"
+        />
+        <div
+          class="flex-grow-1 d-flex flex-column justify-content-between mx-3"
+        >
+          <h3>{{ playerState.item.name }}</h3>
+          <h5>{{ playerState.item.album.name }}</h5>
+          <p>{{ getArtistNames() }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="row gx-0">
+      <div *ngIf="topArtists" class="card bg-teal col-5 p-3">
+        <h4><u>Top Artists This Month:</u></h4>
+        <div *ngFor="let artist of topArtists">
+          <img
+            src="{{ artist.images[2].url }}"
+            width="{{ artist.images[2].width - 100 }}"
+            height="{{ artist.images[2].height - 100 }}"
+            alt="Artist image"
+          />
+          <span class="mx-3">{{ artist.name }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
