@@ -1,0 +1,35 @@
+/* Animation on SVG */
+svg {
+    animation: jump 1s ease-in-out infinite;
+    fill: #fff;
+    stroke-width: 0px;
+}
+
+
+img {
+    //object-fit: contain;
+  }
+
+@keyframes wave {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes jump {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-30px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}

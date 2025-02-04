@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SpotifyService } from '../../services/spotify/spotify.service';
 import { Profile } from '../../interfaces/profile';
 import { NgIf } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -13,7 +14,7 @@ export class HeaderComponent implements OnInit {
   profile: Profile | null = null;
 
 
-  constructor(private spotifyService: SpotifyService) {}
+  constructor(private spotifyService: SpotifyService, private router: Router) {}
 
   /** @inheritdoc */
   ngOnInit(): void {
@@ -21,11 +22,22 @@ export class HeaderComponent implements OnInit {
     this.spotifyService.get<Profile>('https://api.spotify.com/v1/me').subscribe({
       next: (profile: Profile) => {
         this.profile = profile;
+        this.router.navigate(['/home'])
       },
       error: (err) => {
         console.error('Error fetching user profile:', err);
         this.spotifyService.redirectToAuthCodeFlow();
       }
     });
+  }
+
+  /** Redirects the user back to the homepage. */
+  onTitleClick() {
+    this.router.navigate(['/loading']);
+  }
+
+  /** Opens a new tab of the users Spotify profile. */
+  onProfileClick() {
+    window.open(this.profile?.external_urls.spotify, "_blank");
   }
 }

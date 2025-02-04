@@ -27,7 +27,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error fetching top artists:', err);
-        this.spotifyService.redirectToAuthCodeFlow();
       }
     });
     // Get player state and poll the API every 1 seconds
@@ -45,7 +44,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Error fetching player state', err);
         this.playerState = null;
-        this.spotifyService.redirectToAuthCodeFlow();
       },
     });
   }

@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
+import { LoadingComponent } from './components/shared/loading/loading.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'callback', component: HomeComponent }, // Handles the '/callback' route
+  { path: 'home', component: HomeComponent },
+  { path: 'callback', redirectTo: '' }, // Handles the '/callback' route
+  { path: 'loading', component: LoadingComponent },
   { path: '**', redirectTo: '' } // Redirect any unmatched routes to the root
 ];
 

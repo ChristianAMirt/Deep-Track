@@ -1,0 +1,28 @@
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 3rem;
+  }
+
+.cls-1 {
+    fill: #fff;
+    stroke-width: 0px;
+}
+
+.hover-effect {
+    cursor: pointer; /* Ensures cursor changes */
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .hover-effect:hover {
+    background-color: #3f464d !important; /* Lightens the div */
+  }
+
+.hover-effect-text {
+  cursor: pointer; /* Ensures cursor changes */
+  transition: color 0.2s ease-in-out;
+}
+
+  .hover-effect-text:hover {
+    color: rgb(186, 192, 215) !important; /* Lightens the div */
+  }
