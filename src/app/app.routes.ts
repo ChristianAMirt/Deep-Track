@@ -7,7 +7,7 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'callback', redirectTo: '' }, // Handles the '/callback' route
   { path: 'loading', component: LoadingComponent },
-  { path: '**', redirectTo: '' } // Redirect any unmatched routes to the root
+  { path: '**', redirectTo: 'loading' } // Redirect any unmatched routes to the root
 ];
 
 @NgModule({

@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="p-4">
-    <div *ngIf="playerState" class="card bg-teal p-3 mb-5">
+    <div *ngIf="playerState" class="card bg-teal p-3 mb-4">
       <h2><u>Currently Playing:</u></h2>
       <div class="d-flex align-items-center">
         <img
@@ -18,17 +18,34 @@
         </div>
       </div>
     </div>
-    <div class="row gx-0">
-      <div *ngIf="topArtists" class="card bg-teal col-5 p-3">
-        <h4><u>Top Artists This Month:</u></h4>
-        <div *ngFor="let artist of topArtists">
-          <img
-            src="{{ artist.images[2].url }}"
-            width="{{ artist.images[2].width - 100 }}"
-            height="{{ artist.images[2].height - 100 }}"
-            alt="Artist image"
-          />
-          <span class="mx-3">{{ artist.name }}</span>
+    <div class="row">
+      <div class="col-6">
+        <div *ngIf="topArtists" class="card bg-teal p-3">
+          <h4><u>Top Artists This Month:</u></h4>
+          <div *ngFor="let artist of topArtists">
+            <img
+              src="{{ artist.images[2].url }}"
+              width="{{ artist.images[2].width - 100 }}"
+              height="{{ artist.images[2].height - 100 }}"
+              alt="Artist image"
+            />
+            <span class="mx-3">{{ artist.name }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div *ngIf="topArtists" class="card bg-teal p-3">
+          <h4><u>Top Tracks This Month:</u></h4>
+          <div *ngFor="let track of topTracks">
+            <img
+              src="{{ track.album.images[2].url }}"
+              width="{{ track.album.images[2].width - 4 }}"
+              height="{{ track.album.images[2].width - 4 }}"
+              alt="Track image"
+            />
+            <span class="mx-3">{{ track.name }}</span>
+            <span class="mx-3">{{ track.popularity }}</span>
+          </div>
         </div>
       </div>
     </div>

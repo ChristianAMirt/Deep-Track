@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Artist, TopArtistsResponse } from '../../interfaces/artist';
-import { PlayerState } from '../../interfaces/player-state';
 import { Subscription, switchMap, timer } from 'rxjs';
 import { SpotifyService } from '../../services/spotify/spotify.service';
 import { NgFor, NgIf } from '@angular/common';
+import { PlayerState } from '../../interfaces/player-state';
+import { Track, TopTracksResponse } from '../../interfaces/track';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +14,7 @@ import { NgFor, NgIf } from '@angular/common';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   topArtists: Artist[] | null = null;
+  topTracks: Track[] | null = null;
   playerState: PlayerState | null = null;
   subscription: Subscription | null = null;
 
@@ -27,6 +29,15 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error fetching top artists:', err);
+      }
+    });
+    // Get user top tracks
+    this.spotifyService.get<TopTracksResponse>('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=5&offset=0').subscribe({
+      next: (tracksResponse: TopTracksResponse) => {
+        this.topTracks = tracksResponse.items;
+      },
+      error: (err) => {
+        console.error('Error fetching top tracks:', err);
       }
     });
     // Get player state and poll the API every 1 seconds
