@@ -68,13 +68,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Gets the artist names from the player state and adds commas between each.
+   * Gets the artist names and adds commas between each.
+   * @param artists A list of artists to display.
    * @returns A comma seperated string of artist names.
    */
-  getArtistNames(): string {
+  getArtistNames(artists: Artist[]): string {
     let names = '';
     let index = 0;
-    this.playerState?.item.artists.forEach( artist => {
+    artists.forEach( artist => {
       if (index === 0) {
         names = artist.name;
       } else {

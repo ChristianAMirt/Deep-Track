@@ -14,7 +14,7 @@
         >
           <h3>{{ playerState.item.name }}</h3>
           <h5>{{ playerState.item.album.name }}</h5>
-          <p>{{ getArtistNames() }}</p>
+          <p>{{ getArtistNames(playerState.item.artists) }}</p>
         </div>
       </div>
     </div>
@@ -22,30 +22,40 @@
       <div class="col-6">
         <div *ngIf="topArtists" class="card bg-teal p-3">
           <h4><u>Top Artists This Month:</u></h4>
-          <div *ngFor="let artist of topArtists">
-            <img
-              src="{{ artist.images[2].url }}"
-              width="{{ artist.images[2].width - 100 }}"
-              height="{{ artist.images[2].height - 100 }}"
-              alt="Artist image"
-            />
-            <span class="mx-3">{{ artist.name }}</span>
-          </div>
+          <table>
+            <tr *ngFor="let artist of topArtists">
+              <td>
+                <img
+                  src="{{ artist.images[2].url }}"
+                  width="{{ artist.images[2].width - 100 }}"
+                  height="{{ artist.images[2].height - 100 }}"
+                  alt="Artist image"
+                />
+              </td>
+              <td>{{ artist.name }}</td>
+              <td>{{ artist.popularity }}</td>
+            </tr>
+          </table>
         </div>
       </div>
       <div class="col-6">
         <div *ngIf="topArtists" class="card bg-teal p-3">
           <h4><u>Top Tracks This Month:</u></h4>
-          <div *ngFor="let track of topTracks">
-            <img
-              src="{{ track.album.images[2].url }}"
-              width="{{ track.album.images[2].width - 4 }}"
-              height="{{ track.album.images[2].width - 4 }}"
-              alt="Track image"
-            />
-            <span class="mx-3">{{ track.name }}</span>
-            <span class="mx-3">{{ track.popularity }}</span>
-          </div>
+          <table>
+            <tr *ngFor="let track of topTracks">
+              <td>
+                <img
+                  src="{{ track.album.images[2].url }}"
+                  width="{{ track.album.images[2].width - 4 }}"
+                  height="{{ track.album.images[2].width - 4 }}"
+                  alt="Track image"
+                />
+              </td>
+              <td>{{ track.name }}</td>
+              <td>{{ getArtistNames(track.artists) }}</td>
+              <td>{{ track.popularity }}</td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>

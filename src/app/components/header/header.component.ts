@@ -22,7 +22,10 @@ export class HeaderComponent implements OnInit {
     this.spotifyService.get<Profile>('https://api.spotify.com/v1/me').subscribe({
       next: (profile: Profile) => {
         this.profile = profile;
-        this.router.navigate(['/home'])
+        setTimeout(() => {
+          // Wait just to see the nice loading screen
+          this.router.navigate(['/home']);
+        }, 2000);
       },
       error: (err) => {
         console.error('Error fetching user profile:', err);
