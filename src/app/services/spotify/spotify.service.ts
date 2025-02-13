@@ -134,9 +134,11 @@ export class SpotifyService {
    */
   private getRedirectUri(): string | null {
     const currentUrl = window.location.href;
-    if (currentUrl.includes('localhost')) {
-      return 'http://localhost:4200/callback';
-    } else if (currentUrl.includes('github.io')) {
+    if (currentUrl.includes('127.0.0.1')) { // using ng serve
+      return 'http://127.0.0.1:4200/callback';
+    } else if (currentUrl.includes('localhost')) { // using ng serve --ssl
+      return 'https://localhost:4200/callback';
+    } else if (currentUrl.includes('github.io')) { // using ghpages
       return 'https://christianamirt.github.io/Deep-Track/callback';
     }
     return null; // Unknown environment
