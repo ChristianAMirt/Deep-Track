@@ -5,6 +5,7 @@ import { SpotifyService } from '../../services/spotify/spotify.service';
 import { NgFor, NgIf } from '@angular/common';
 import { PlayerState } from '../../interfaces/player-state';
 import { Track, TopTracksResponse } from '../../interfaces/track';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +19,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   playerState: PlayerState | null = null;
   subscription: Subscription | null = null;
 
-  constructor(private spotifyService: SpotifyService) {}
+  constructor(private spotifyService: SpotifyService, private router: Router) {}
 
   /** @inheritdoc */
   ngOnInit() {
@@ -73,16 +74,11 @@ export class HomeComponent implements OnInit, OnDestroy {
    * @returns A comma seperated string of artist names.
    */
   getArtistNames(artists: Artist[]): string {
-    let names = '';
-    let index = 0;
-    artists.forEach( artist => {
-      if (index === 0) {
-        names = artist.name;
-      } else {
-        names += `, ${artist.name}`;
-      }
-      index++;
-    });
-    return names;
+    return artists.map(artist => artist.name).join(', ') || '';
+  }
+
+  /** Redirects the user to the tableview. */
+  onCardClick() {
+    this.router.navigate(['/table-view']);
   }
 }

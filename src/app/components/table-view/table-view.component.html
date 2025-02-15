@@ -1,0 +1,32 @@
+<div class="container-fluid p-4">
+  <div *ngIf="tableType === 'artists' && topArtists" class="card bg-teal p-3">
+    <table>
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Artist</th>
+          <th>Genres</th>
+          <th>Popularity</th>
+          <th>Followers</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let artist of topArtists?.items; let i = index">
+          <td>{{ i + 1 }}.</td>
+          <td>
+            <img
+              src="{{ artist.images[2].url }}"
+              width="{{ artist.images[2].width - 120 }}"
+              height="{{ artist.images[2].height - 120 }}"
+              class="me-2"
+              alt="Artist image"
+            />{{ artist.name }}
+          </td>
+          <td>{{ artist.genres.join(", ") || "N/A" }}</td>
+          <td>{{ artist.popularity }}</td>
+          <td>{{ artist.followers.total | number }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -20,10 +20,15 @@
     </div>
     <div class="row">
       <div class="col-6">
-        <div *ngIf="topArtists" class="card bg-teal p-3">
+        <div
+          *ngIf="topArtists"
+          class="card hover-effect bg-teal p-3"
+          (click)="onCardClick()"
+        >
           <h4><u>Top Artists This Month:</u></h4>
           <table>
-            <tr *ngFor="let artist of topArtists">
+            <tr *ngFor="let artist of topArtists; let i = index">
+              <td>{{ i + 1 }}.</td>
               <td>
                 <img
                   src="{{ artist.images[2].url }}"
@@ -42,7 +47,8 @@
         <div *ngIf="topArtists" class="card bg-teal p-3">
           <h4><u>Top Tracks This Month:</u></h4>
           <table>
-            <tr *ngFor="let track of topTracks">
+            <tr *ngFor="let track of topTracks; let i = index">
+              <td>{{ i + 1 }}.</td>
               <td>
                 <img
                   src="{{ track.album.images[2].url }}"

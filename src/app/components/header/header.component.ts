@@ -36,7 +36,7 @@ export class HeaderComponent implements OnInit {
 
   /** Redirects the user back to the homepage. */
   onTitleClick() {
-    this.router.navigate(['/loading']);
+    this.router.navigate(['/home']);
   }
 
   /** Opens a new tab of the users Spotify profile. */
