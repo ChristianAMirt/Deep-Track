@@ -6,3 +6,13 @@
 .bg-red {
     background-color: #F56565 !important;
 }
+
+.background-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover; /* Ensures it covers the entire screen */
+    z-index: -1; /* Sends it behind other content */
+  }

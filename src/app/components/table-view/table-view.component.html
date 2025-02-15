@@ -1,6 +1,6 @@
 <div class="container-fluid p-4">
   <div *ngIf="tableType === 'artists' && topArtists" class="card bg-teal p-3">
-    <table>
+    <table class="table table-dark table-hover">
       <thead>
         <tr>
           <th>Rank</th>
@@ -16,8 +16,8 @@
           <td>
             <img
               src="{{ artist.images[2].url }}"
-              width="{{ artist.images[2].width - 120 }}"
-              height="{{ artist.images[2].height - 120 }}"
+              width="50"
+              height="50"
               class="me-2"
               alt="Artist image"
             />{{ artist.name }}

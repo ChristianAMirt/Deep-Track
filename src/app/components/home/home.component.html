@@ -22,45 +22,49 @@
       <div class="col-6">
         <div
           *ngIf="topArtists"
-          class="card hover-effect bg-teal p-3"
+          class="card hover-effect bg-teal p-4"
           (click)="onCardClick()"
         >
           <h4><u>Top Artists This Month:</u></h4>
-          <table>
-            <tr *ngFor="let artist of topArtists; let i = index">
-              <td>{{ i + 1 }}.</td>
-              <td>
-                <img
-                  src="{{ artist.images[2].url }}"
-                  width="{{ artist.images[2].width - 100 }}"
-                  height="{{ artist.images[2].height - 100 }}"
-                  alt="Artist image"
-                />
-              </td>
-              <td>{{ artist.name }}</td>
-              <td>{{ artist.popularity }}</td>
-            </tr>
+          <table class="table table-dark mb-0">
+            <tbody>
+              <tr *ngFor="let artist of topArtists; let i = index">
+                <td>{{ i + 1 }}.</td>
+                <td>
+                  <img
+                    src="{{ artist.images[2].url }}"
+                    width="{{ artist.images[2].width - 100 }}"
+                    height="{{ artist.images[2].height - 100 }}"
+                    alt="Artist image"
+                  />
+                </td>
+                <td>{{ artist.name }}</td>
+                <td>{{ artist.popularity }}</td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
       <div class="col-6">
-        <div *ngIf="topArtists" class="card bg-teal p-3">
+        <div *ngIf="topArtists" class="card bg-teal p-4">
           <h4><u>Top Tracks This Month:</u></h4>
-          <table>
-            <tr *ngFor="let track of topTracks; let i = index">
-              <td>{{ i + 1 }}.</td>
-              <td>
-                <img
-                  src="{{ track.album.images[2].url }}"
-                  width="{{ track.album.images[2].width - 4 }}"
-                  height="{{ track.album.images[2].width - 4 }}"
-                  alt="Track image"
-                />
-              </td>
-              <td>{{ track.name }}</td>
-              <td>{{ getArtistNames(track.artists) }}</td>
-              <td>{{ track.popularity }}</td>
-            </tr>
+          <table class="table table-dark mb-0">
+            <tbody>
+              <tr *ngFor="let track of topTracks; let i = index">
+                <td>{{ i + 1 }}.</td>
+                <td>
+                  <img
+                    src="{{ track.album.images[2].url }}"
+                    width="{{ track.album.images[2].width - 4 }}"
+                    height="{{ track.album.images[2].width - 4 }}"
+                    alt="Track image"
+                  />
+                </td>
+                <td>{{ track.name }}</td>
+                <td>{{ getArtistNames(track.artists) }}</td>
+                <td>{{ track.popularity }}</td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
